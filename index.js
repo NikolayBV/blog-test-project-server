@@ -29,14 +29,19 @@ app.get('/posts', (req, res) => {
         const pag = req.query.page;
         const lim = req.query.limit;
         if(lim == '10'){
-            if(pag == '1') res.setHeader('X-total-count', '100').send(posts.slice(pag - 1, lim))
+            if(pag == '1') res.send(posts.slice(pag - 1, lim))
             else{
                 const start = (pag - 1) * lim;
-                const end = start + lim;
-                res.end(posts.slice(start, end));
+                const end = +start + +lim;
+                res.send(posts.slice(start, end));
             }
         }
     }
+    else{
+        res.send(posts);
+    }
+});
+app.get('/posts/all', (req, res) => {
     res.send(posts);
 });
 
