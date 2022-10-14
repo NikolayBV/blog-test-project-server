@@ -81,6 +81,16 @@ app.post('/posts/:id', (req, res) => {
     res.sendStatus(200);
 })
 
+app.post('/posts/add/:id', (req, res) => {
+    const post = {
+        id: req.body.id,
+        title: req.body.title,
+        body: req.body.body
+    }
+    arrayPosts = [...arrayPosts, post];
+    res.sendStatus(200);
+})
+
 
 app.delete('/posts/:id',(req, res) => {
     const id = req.params.id;
