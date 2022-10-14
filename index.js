@@ -11,8 +11,11 @@ const corsOptions ={
     optionSuccessStatus:200
 }
 app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
+let arrayPosts = posts;
 const createPath = (page) => path.resolve(__dirname, 'dist', `${page}.html`);
 const PORT = 5000;
 
@@ -21,7 +24,7 @@ app.listen(PORT, (err) => {
 });
 
 app.get('/', (req, res) => {
-    res.send(posts);
+    res.send(arrayPosts);
 })
 
 app.get('/posts', (req, res) => {
@@ -29,20 +32,20 @@ app.get('/posts', (req, res) => {
         const pag = req.query.page;
         const lim = req.query.limit;
         if(lim == '10'){
-            if(pag == '1') res.send(posts.slice(pag - 1, lim))
+            if(pag == '1') res.send(arrayPosts.slice(pag - 1, lim))
             else{
                 const start = (pag - 1) * lim;
                 const end = +start + +lim;
-                res.send(posts.slice(start, end));
+                res.send(arrayPosts.slice(start, end));
             }
         }
     }
     else{
-        res.send(posts);
+        res.send(arrayPosts);
     }
 });
 app.get('/posts/all', (req, res) => {
-    res.send(posts);
+    res.send(arrayPosts);
 });
 
 app.get('/users', (req, res) => {
@@ -51,7 +54,7 @@ app.get('/users', (req, res) => {
 
 app.get('/posts/:id', (req, res) => {
     let id = req.params.id;
-    res.send(posts[id - 1])//переписать на find
+    res.send(arrayPosts[id - 1])//переписать на find
 });
 
 app.get('/users/:id', (req, res) => {
@@ -68,65 +71,21 @@ app.get('/posts/:id/:user', (req, res) => {
 });
 
 app.post('/posts/:id', (req, res) => {
-    if (!req.body) return res.sendStatus(400);
-    else return res.sendStatus(200);
+    arrayPosts = arrayPosts.map((post) => {
+        if(post.id == req.body.id){
+            post.title = req.body.title
+            post.body = req.body.body
+        }
+        return post;
+    })
+    res.sendStatus(200);
 })
 
-app.put('/posts/:id', (req, res) => {
-    if (!req.body) return res.sendStatus(400);
-    else return res.sendStatus(200);
+
+app.delete('/posts/:id',(req, res) => {
+    const id = req.params.id;
+    arrayPosts = arrayPosts.filter((post) => {
+        return String(post.id) !== id;
+    })
+    res.sendStatus(200);
 })
-
-// app.delete(() => {
-
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const PORT = 3000;
-
-// const server = http.createServer((req, res) => {
-
-//     res.setHeader('Content-type', 'application/json');
-
-//     // const createPath = (page) => path.resolve(__dirname, 'dist', `${page}.html`);
-//     // console.log(posts)
-//     // fs.readFile('./frontend/dist/index.html', (err, data) => {
-//     //     if(err){
-//     //         console.log(err);
-//     //         res.end();
-//     //     }
-//     //     else{
-//     //         res.write(data);
-//     //         res.end();
-//     //     }
-//     // })
-//     fs.readFile('./server/posts.json', 'utf-8', (err, data) => {
-//         if(!err){
-//             res.end(data);
-//             res.end();
-//         }
-//         else{
-//             console.log(err);
-//             res.end();
-//         }
-//     })   
-// });
-
-
-// server.listen(PORT, 'localhost', (error) => {
-//     error ? console.log(error): console.log(`listening port ${PORT}`)
-// })
