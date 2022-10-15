@@ -85,7 +85,8 @@ app.post('/posts/add/:id', (req, res) => {
     const post = {
         id: req.body.id,
         title: req.body.title,
-        body: req.body.body
+        body: req.body.body,
+        author: req.body.author
     }
     arrayPosts = [...arrayPosts, post];
     res.sendStatus(200);
