@@ -43,11 +43,6 @@ app.get('/posts', (req, res) => {
     //todo: удалить условия
 });
 
-
-app.get('/users', (req, res) => {
-    res.send(arrayUsers);
-});
-
 app.get('/posts/:id', (req, res) => {
     let id = req.params.id;
     let post = arrayPosts.find(item => item.id == id)
@@ -55,21 +50,7 @@ app.get('/posts/:id', (req, res) => {
     //todo: переписать на find
 });
 
-app.get('/users/:id', (req, res) => {
-    let id = req.params.id;
-    res.send(arrayUsers.find(item => item.id === id))
-    //todo: переписать на find
-});
-
-// app.get('/posts/:id/:user', (req, res) => {
-//     let id = req.params.id;
-//     let user = users.find((item) => {
-//         return item.id == posts[id].userId;
-//     });
-//     res.send(user);
-// });
-
-app.put('/posts/:id', (req, res) => {
+app.post('/posts/:id', (req, res) => {
     try{
         arrayPosts = arrayPosts.map((post) => {
             if(post.id === req.body.id){
@@ -86,19 +67,54 @@ app.put('/posts/:id', (req, res) => {
     catch (e){
         res.sendStatus(404);
     }
-})
+});
+
+app.delete('/posts/:id',(req, res) => {
+    const id = req.params.id;
+    arrayPosts = arrayPosts.filter((post) => {
+        return String(post.id) !== id;
+    })
+    res.sendStatus(200);
+});
+
+app.get('/users', (req, res) => {
+    res.send(arrayUsers);
+});
+
+app.get('/users/:id', (req, res) => {
+    let id = req.params.id;
+    res.send(arrayUsers.find(item => item.id === id))
+    //todo: переписать на find
+});
+
+app.post('/users/:id', (req, res) => {
+    try{
+        arrayUsers = arrayUsers.map((user) => {
+            if(user.id === req.body.id){
+                user.id = req.body.id
+                user.title = req.body.title
+                user.body = req.body.body
+            }
+            return user;
+        })
+        //todo: использовать find и обработать ошибку, сгенерировать новый id;
+        //post - добавление, put - измененеи
+        res.sendStatus(200);
+    }
+    catch (e){
+        res.sendStatus(404);
+    }
+});
+
+app.delete('/users/:id',(req, res) => {
+    const id = req.params.id;
+    arrayPosts = arrayPosts.filter((user) => {
+        return String(user.id) !== id;
+    })
+    res.sendStatus(200);
+});
 
 
-// app.post('/posts/add/:id', (req, res) => {
-//     const post = {
-//         id: req.body.id,
-//         title: req.body.title,
-//         body: req.body.body,
-//         author: req.body.author
-//     }
-//     arrayPosts = [...arrayPosts, post];
-//     res.sendStatus(200);
-// })
 
 // todo: app.put();
 app.put('/create', (req, res) => {
@@ -112,11 +128,3 @@ app.put('/create', (req, res) => {
     res.sendStatus(200);
 })
 
-
-app.delete('/posts/:id',(req, res) => {
-    const id = req.params.id;
-    arrayPosts = arrayPosts.filter((post) => {
-        return String(post.id) !== id;
-    })
-    res.sendStatus(200);
-})
