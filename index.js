@@ -3,6 +3,7 @@ import express from 'express';
 import posts from './data/posts.json' assert {type: 'json'};
 import users from './data/users.json' assert {type: 'json'};
 import cors from 'cors';
+import fs from 'fs';
 
 const app = express();
 const corsOptions ={
@@ -17,6 +18,9 @@ app.use(express.urlencoded({ extended: true }));
 
 let arrayPosts = posts;
 let arrayUsers = users;
+
+//todo: изменять сами файлы;
+
 const PORT = 5000;
 
 app.listen(PORT, (err) => {
@@ -40,33 +44,30 @@ app.get('/posts', (req, res) => {
         res.send(arrayPosts);
     }
 
-    //todo: удалить условия
+    //todo: удалить условия - done
 });
 
 app.get('/posts/:id', (req, res) => {
     let id = req.params.id;
     let post = arrayPosts.find(item => item.id == id)
     res.send(post)
-    //todo: переписать на find
+    //todo: переписать на find - done
 });
 
 app.post('/posts/:id', (req, res) => {
-    try{
-        arrayPosts = arrayPosts.map((post) => {
-            if(post.id === req.body.id){
-                post.id = req.body.id
-                post.title = req.body.title
-                post.body = req.body.body
+    arrayPosts = arrayPosts.map((item) => {
+            if(item.id === req.body.id){
+                item.id = req.body.id
+                item.title = req.body.title
+                item.body = req.body.body
+                return item;
             }
-            return post;
-        })
-        //todo: использовать find и обработать ошибку, сгенерировать новый id;
-        //post - добавление, put - измененеи
-        res.sendStatus(200);
-    }
-    catch (e){
-        res.sendStatus(404);
-    }
+            return item;
+    });
+    fs.writeFile('./data/posts.json', JSON.stringify(arrayPosts), (err) => {
+        if(err) res.sendStatus(404)
+        res.send(req.body);
+    })
 });
 
 app.delete('/posts/:id',(req, res) => {
@@ -74,7 +75,10 @@ app.delete('/posts/:id',(req, res) => {
     arrayPosts = arrayPosts.filter((post) => {
         return String(post.id) !== id;
     })
-    res.sendStatus(200);
+    fs.writeFile('./data/posts.json', JSON.stringify(arrayPosts), (err) => {
+        if(err) res.sendStatus(404)
+        res.send(req.body);
+    })
 });
 
 app.get('/users', (req, res) => {
@@ -88,22 +92,19 @@ app.get('/users/:id', (req, res) => {
 });
 
 app.post('/users/:id', (req, res) => {
-    try{
-        arrayUsers = arrayUsers.map((user) => {
-            if(user.id === req.body.id){
-                user.id = req.body.id
-                user.title = req.body.title
-                user.body = req.body.body
-            }
-            return user;
-        })
-        //todo: использовать find и обработать ошибку, сгенерировать новый id;
-        //post - добавление, put - измененеи
-        res.sendStatus(200);
-    }
-    catch (e){
-        res.sendStatus(404);
-    }
+    arrayUsers = arrayUsers.map((item) => {
+        if(item.id === req.body.id){
+            item.id = req.body.id
+            item.title = req.body.title
+            item.body = req.body.body
+            return item;
+        }
+        return item;
+    });
+    fs.writeFile('./data/users.json', JSON.stringify(arrayUsers), (err) => {
+        if(err) res.sendStatus(404)
+        res.send(req.body);
+    })
 });
 
 app.delete('/users/:id',(req, res) => {
@@ -111,13 +112,16 @@ app.delete('/users/:id',(req, res) => {
     arrayPosts = arrayPosts.filter((user) => {
         return String(user.id) !== id;
     })
-    res.sendStatus(200);
+    fs.writeFile('./data/users.json', JSON.stringify(arrayUsers), (err) => {
+        if(err) res.sendStatus(404)
+        res.send(req.body);
+    })
 });
 
 
 
 // todo: app.put();
-app.put('/create', (req, res) => {
+app.put('/posts', (req, res) => {
     const post= {
         id: Date.now(),
         title: req.body.title,
@@ -125,6 +129,9 @@ app.put('/create', (req, res) => {
         author: req.body.author
     }
     arrayPosts = [...arrayPosts, post];
-    res.sendStatus(200);
+    fs.writeFile('./data/posts.json', JSON.stringify(arrayPosts), (err) => {
+        if(err) res.sendStatus(404)
+        res.send(req.body);
+    })
 })
 
