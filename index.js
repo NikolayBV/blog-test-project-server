@@ -38,10 +38,10 @@ app.get('/posts', (req, res) => {
 
         const start = (pag - 1) * lim;
         const end = +start + +lim;
-        res.send(arrayPosts.slice(start, end));
+        res.send({posts: arrayPosts.slice(start, end), count: posts.length});
     }
-    else if(Object.keys(req.query).length === 0){
-        res.send(arrayPosts);
+    else{
+        res.send({posts: arrayPosts, count: posts.length});
     }
 
     //todo: удалить условия - done
