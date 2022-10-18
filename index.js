@@ -122,6 +122,8 @@ app.delete('/users/:id',(req, res) => {
 
 // todo: app.put();
 app.put('/posts', (req, res) => {
+    const findPost = users.find(user => user.name === req.body.author);
+    if(!findPost) res.send(404);
     const post= {
         id: Date.now(),
         title: req.body.title,
