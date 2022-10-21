@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 import posts from "./data/posts.json";
 import users from "./data/users.json";
 import cors from "cors";
@@ -54,9 +54,14 @@ app.get<PostsObjSend>('/posts', (req, res) => {
 
 
 app.get('/posts/:id', (req, res) => {
-    let id = req.params.id;
-    let post: Array<IPost> = arrayPosts.filter((item: IPost) => item.id === Number(id)) //use filter - not find
-    res.send(post)
+    const id = req.params.id;
+    const post: Array<IPost> = arrayPosts.filter((item: IPost) => item.id === Number(id)); //use filter - not find
+    const myObj: IPost = {
+        id: post[0].id,
+        title: post[0].title,
+        body: post[0].body
+    }
+    res.send(myObj)
     //todo: переписать на find - done
 });
 
