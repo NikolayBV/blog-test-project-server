@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-let arrayPosts = posts;
+let arrayPosts: Array<IPost> = posts;
 let arrayUsers = users;
 
 //todo: изменять сами файлы;
@@ -43,6 +43,7 @@ app.get<PostsObjSend>('/posts', (req, res) => {
 
         const start: number = (Number(pag) - 1) * Number(lim);
         const end: number = +start + +lim;
+
         res.send({posts: arrayPosts.slice(start, end), count: posts.length});
     }
     else{
