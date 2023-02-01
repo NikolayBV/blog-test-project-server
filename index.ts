@@ -21,7 +21,7 @@ let arrayUsers = users;
 
 //todo: изменять сами файлы;
 
-const PORT = 8080;
+const PORT = 8000;
 
 app.listen(PORT, () => {
     console.log(`listening port ${PORT}`);
@@ -135,11 +135,11 @@ app.delete('/users/:id',(req, res) => {
 
 
 // todo: app.put();
-app.put('/posts', (req, res) => {
+app.post('/posts', (req, res) => {
     const findPost = users.find((user) => user.name === req.body.author);
     if(!findPost) res.send(404);
     const post = {
-        id: Date.now(),
+        id: arrayPosts.length + 1,
         title: req.body.title,
         body: req.body.body,
         author: req.body.author
